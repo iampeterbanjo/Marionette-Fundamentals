@@ -96,7 +96,10 @@
 			var UserListView = Marionette.CollectionView.extend({
 				tagName: 'table',
 				className: 'table table-striped',
-				childView: UserItemView
+				childView: UserItemView,
+				onBeforeRender: function() {
+					this.$el.append('<h2>User list</h2>');
+				}
 			});
 
 			// for debugging
