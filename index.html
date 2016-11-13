@@ -23,19 +23,27 @@
 	<script src="//cdn.jsdelivr.net/backbone.marionette/2.4.5/backbone.marionette.min.js"></script>
 
 	<script>
-		// jshint esversion: 6
-		var UserAdmin = new Marionette.Application();
-
-		UserAdmin.addRegions({
-			mainRegion: "#app"
-		});
-
-		var IndexView = Marionette.ItemView.extend({
-			template: "#index-template"
-		});
-
 		$(function() {
-			UserAdmin.mainRegion.show(new IndexView());
+			var UserAdmin = new Marionette.Application();
+
+			// use Controllers to manage views
+			var AppController = Marionette.Controller.extend({
+				showIndex: function() {
+					var IndexView = Marionette.ItemView.extend({
+						template: "#index-template"
+					});
+
+					UserAdmin.mainRegion.show(new IndexView());
+				}
+			});
+
+			UserAdmin.addInitializer(function() {
+				UserAdmin.addRegions({
+					mainRegion: "#app"
+				});
+			});
+
+			UserAdmin.start();
 		});
 	</script>
 </body>
