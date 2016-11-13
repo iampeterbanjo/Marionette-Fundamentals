@@ -12,7 +12,7 @@
 		<p>A demo application written to Marionette.JS</p>
 
 		<ul>
-			<li><a href="#" id="users">Users</a></li>
+			<li><a href="#" id="nav-users-index">Users</a></li>
 			<li><a href="#" id="roles">Roles</a></li>
 		</ul>
 	</script>
@@ -24,27 +24,40 @@
 
 	<script>
 		$(function() {
+			var testData = [
+				{id: 1, email: "test1@email.com"},
+				{id: 2, email: "test2@email.com"},
+				{id: 3, email: "test3@email.com"},
+				{id: 4, email: "test4@email.com"}
+			];
+
 			var UserAdmin = new Marionette.Application();
 
 			var AppRouter = Backbone.Router.extend({
 				// routes
 				routes: {
-					"": "showIndex"
+					"": "showIndex",
+					"users": "showUserList"
 				},
 				// route handlers
 				showIndex: function() {
 					UserAdmin.AppController.showIndex();
+				},
+				showUserList: function() {
+					UserAdmin.AppController.showUserList();
 				}
 			});
 
 			// use Controllers to manage views
 			var AppController = Marionette.Controller.extend({
 				showIndex: function() {
-					var IndexView = Marionette.ItemView.extend({
-						template: "#index-template"
-					});
-
 					UserAdmin.mainRegion.show(new IndexView());
+				},
+				showUserList: function() {
+					UserAdmin.mainRegion.show(new UserListView({
+						collection: new Backbone.Collection(testData)
+					}));
+					UserAdmin.AppRouter.navigate("users");
 				}
 			});
 
@@ -54,12 +67,37 @@
 				});
 
 				UserAdmin.AppController = new AppController();
-				UserAdmin.Router = new AppRouter();
+				UserAdmin.AppRouter = new AppRouter();
 
 				Backbone.history.start();
 			});
 
 			UserAdmin.start();
+
+			var IndexView = Marionette.ItemView.extend({
+				template: "#index-template",
+
+				events: {
+					'click #nav-users-index': 'showUserList'
+				},
+
+				showUserList: function(event) {
+					event.preventDefault();
+
+					UserAdmin.AppController.showUserList();
+				}
+			});
+
+			var UserItemView = Marionette.ItemView.extend({
+				tagName: 'tr',
+				template: _.template('<td><%= email %></td>')
+			});
+
+			var UserListView = Marionette.CollectionView.extend({
+				tagName: 'table',
+				className: 'table table-striped',
+				childView: UserItemView
+			});
 
 			// for debugging
 			window.UserAdmin = UserAdmin;
