@@ -12,8 +12,8 @@
 		<p>A demo application written to Marionette.JS</p>
 
 		<ul>
-			<li><a href="#">Users</a></li>
-			<li><a href="#">Roles</a></li>
+			<li><a href="#" id="users">Users</a></li>
+			<li><a href="#" id="roles">Roles</a></li>
 		</ul>
 	</script>
 
@@ -30,10 +30,26 @@
 			var AppController = Marionette.Controller.extend({
 				showIndex: function() {
 					var IndexView = Marionette.ItemView.extend({
-						template: "#index-template"
+						template: "#index-template",
+
+						events: {
+							'click #users': function(event) {
+								event.preventDefault();
+
+								UserAdmin.AppController.showUser();
+							}
+						}
 					});
 
 					UserAdmin.mainRegion.show(new IndexView());
+				},
+
+				showUser: function() {
+					var UserView = Marionette.ItemView.extend({
+						template: '<h1>User #1</h1>'
+					});
+
+					UserAdmin.mainRegion.show(new UserView());
 				}
 			});
 
@@ -41,6 +57,9 @@
 				UserAdmin.addRegions({
 					mainRegion: "#app"
 				});
+
+				UserAdmin.AppController = new AppController();
+				UserAdmin.AppController.showIndex();
 			});
 
 			UserAdmin.start();
