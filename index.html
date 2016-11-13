@@ -26,30 +26,25 @@
 		$(function() {
 			var UserAdmin = new Marionette.Application();
 
+			var AppRouter = Backbone.Router.extend({
+				// routes
+				routes: {
+					"": "showIndex"
+				},
+				// route handlers
+				showIndex: function() {
+					UserAdmin.AppController.showIndex();
+				}
+			});
+
 			// use Controllers to manage views
 			var AppController = Marionette.Controller.extend({
 				showIndex: function() {
 					var IndexView = Marionette.ItemView.extend({
-						template: "#index-template",
-
-						events: {
-							'click #users': function(event) {
-								event.preventDefault();
-
-								UserAdmin.AppController.showUser();
-							}
-						}
+						template: "#index-template"
 					});
 
 					UserAdmin.mainRegion.show(new IndexView());
-				},
-
-				showUser: function() {
-					var UserView = Marionette.ItemView.extend({
-						template: '<h1>User #1</h1>'
-					});
-
-					UserAdmin.mainRegion.show(new UserView());
 				}
 			});
 
@@ -59,10 +54,15 @@
 				});
 
 				UserAdmin.AppController = new AppController();
-				UserAdmin.AppController.showIndex();
+				UserAdmin.Router = new AppRouter();
+
+				Backbone.history.start();
 			});
 
 			UserAdmin.start();
+
+			// for debugging
+			window.UserAdmin = UserAdmin;
 		});
 	</script>
 </body>
