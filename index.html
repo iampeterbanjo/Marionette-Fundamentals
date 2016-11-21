@@ -12,9 +12,17 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-xs-10">
+				<div class="breadcrumbs"></div>
+			</div>
+		</div>
+		<!-- /.row -->
+
+		<div class="row">
+			<div class="col-xs-10">
 				<div id="app" ></div>	
 			</div>
 		</div>
+		<!-- /.row -->
 	</div>
 
 	<script id="index-template" type="text/x-backbone">
@@ -139,30 +147,62 @@
 				}
 			});
 
+			var BreadCrumbsController = Marionette.Controller.extend({
+				showIndex: function() {
+					var crumbs = new BreadCrumbsCollection({ title: 'Home' });
+					this.render(crumbs);
+				},
+				showUserList: function() {
+					var crumbs = new BreadCrumbsCollection([
+						{ title: 'Home' },
+						{ title: 'Users' }
+					]);
+					this.render(crumbs);
+				},
+				showUserEmail: function(user) {
+					var crumbs = new BreadCrumbsCollection([
+						{ title: 'Home' },
+						{ title: 'Users' },
+						{ title: user.get('email') }
+					]);
+					this.render(crumbs);
+				},
+				render: function(crumbs) {
+					UserAdmin.navRegion.show(new BreadCrumbsListView({
+						collection: crumbs
+					}));
+				}
+			});
+
 			// Events
 			UserAdmin.addInitializer(function() {
 				UserAdmin.on('user:selected', function(user) {
 					UserAdmin.AppController.showUserDetails(user);
+					UserAdmin.BreadCrumbsController.showUserEmail(user);
 				});
 
 				UserAdmin.on('userList:selected', function() {
 					UserAdmin.AppController.showUserList();
+					UserAdmin.BreadCrumbsController.showUserList();
 				});
 
 				UserAdmin.on('index:selected', function() {
 					UserAdmin.AppController.showIndex();
+					UserAdmin.BreadCrumbsController.showIndex();
 				});
 			});
 
 			UserAdmin.addInitializer(function() {
 				UserAdmin.addRegions({
-					mainRegion: "#app"
+					mainRegion: "#app",
+					navRegion: '.breadcrumbs'
 				});
 
 				// init
 				UserAdmin.AppController = new AppController();
 				UserAdmin.AppRouter = new AppRouter();
 				UserAdmin.Users = new UserCollection(testData);
+				UserAdmin.BreadCrumbsController = new BreadCrumbsController();
 				
 				// start
 				Backbone.history.start();
@@ -170,6 +210,7 @@
 
 			UserAdmin.start();
 
+			// User views
 			var IndexView = Marionette.ItemView.extend({
 				template: "#index-template",
 
@@ -220,6 +261,20 @@
 
 			var UserProfileView = Marionette.ItemView.extend({
 				template: '#user-profile-template'
+			});
+
+			// Breadcrumbs views
+			var BreadCrumbsView = Marionette.ItemView.extend({
+				tagName: 'li',
+				template: _.template('<%= title %>')
+			});
+
+			var BreadCrumbsCollection = Backbone.Collection.extend({});
+
+			var BreadCrumbsListView = Marionette.CollectionView.extend({
+				tagName: 'ol',
+				className: 'breadcrumb',
+				childView: BreadCrumbsView
 			});
 
 			// for debugging
