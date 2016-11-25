@@ -5,20 +5,37 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Marionette Fundamentals</title>
 
-  <!-- Bootstrap -->
-  <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<!-- fonts -->
+	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+	
+	<!-- reset -->
+	<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css">
+
+  <!-- milligram -->
+  <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/milligram/1.2.0/milligram.css">
 </head>
 <body>
+	<style>
+		.breadcrumbs li {
+			list-style: none;
+		}
+
+		.breadcrumbs li::after {
+			content: '/';
+			display: inline-block;			
+			margin: 0 5px;
+		}
+	</style>
 	<div class="container">
 		<div class="row">
-			<div class="col-xs-10">
-				<div class="breadcrumbs"></div>
+			<div class="column">
+				<div id="nav-breadcrumbs" class="clearfix"></div>
 			</div>
 		</div>
 		<!-- /.row -->
 
 		<div class="row">
-			<div class="col-xs-10">
+			<div class="column">
 				<div id="app" ></div>	
 			</div>
 		</div>
@@ -40,14 +57,14 @@
 			<h1>User details</h1>
 
 			<div class="row">
-				<div class="col-xs-12">
+				<div class="column">
 					<h2>Viewing <%= email %></h2>
 				</div>
 			</div>	
 
 			<div class="row">
-				<div class="col-xs-3" id="summary"></div>
-				<div class="col-xs-9" id="profile"></div>
+				<div class="column column-25" id="summary"></div>
+				<div class="column column-75" id="profile"></div>
 			</div>
 		</div>
 	</script>
@@ -195,7 +212,7 @@
 			UserAdmin.addInitializer(function() {
 				UserAdmin.addRegions({
 					mainRegion: "#app",
-					navRegion: '.breadcrumbs'
+					navRegion: '#nav-breadcrumbs'
 				});
 
 				// init
@@ -266,6 +283,7 @@
 			// Breadcrumbs views
 			var BreadCrumbsView = Marionette.ItemView.extend({
 				tagName: 'li',
+				className: 'breadcrumb float-left',
 				template: _.template('<%= title %>')
 			});
 
@@ -273,7 +291,7 @@
 
 			var BreadCrumbsListView = Marionette.CollectionView.extend({
 				tagName: 'ol',
-				className: 'breadcrumb',
+				className: 'breadcrumbs',
 				childView: BreadCrumbsView
 			});
 
