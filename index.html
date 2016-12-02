@@ -164,48 +164,31 @@
 				}
 			});
 
-			var BreadCrumbsController = Marionette.Controller.extend({
-				showIndex: function() {
-					var crumbs = new BreadCrumbsCollection({ title: 'Home' });
-					this.renderView(crumbs);
-				},
-				showUserList: function() {
-					var crumbs = new BreadCrumbsCollection([
-						{ title: 'Home' },
-						{ title: 'Users' }
-					]);
-					this.renderView(crumbs);
-				},
-				showUserEmail: function(user) {
-					var crumbs = new BreadCrumbsCollection([
-						{ title: 'Home' },
-						{ title: 'Users' },
-						{ title: user.get('email') }
-					]);
-					this.renderView(crumbs);
-				},
-				renderView: function(crumbs) {
-					UserAdmin.navRegion.show(new BreadCrumbsListView({
-						collection: crumbs
-					}));
-				}
-			});
-
 			// Events
 			UserAdmin.addInitializer(function() {
+				var crumbs = {
+					home: {
+						title: 'Home', trigger: 'index:selected'
+					},
+					list: {
+						title: 'User listing', trigger: 'userList:selected'
+					}
+				};
+
 				UserAdmin.on('user:selected', function(user) {
 					UserAdmin.AppController.showUserDetails(user);
-					UserAdmin.BreadCrumbsController.showUserEmail(user);
+					UserAdmin.BreadCrumbsCollection.reset([crumbs.home, crumbs.list, {title: user.get('email') }
+					]);
 				});
 
 				UserAdmin.on('userList:selected', function() {
 					UserAdmin.AppController.showUserList();
-					UserAdmin.BreadCrumbsController.showUserList();
+					UserAdmin.BreadCrumbsCollection.reset([crumbs.home, crumbs.list]);
 				});
 
 				UserAdmin.on('index:selected', function() {
 					UserAdmin.AppController.showIndex();
-					UserAdmin.BreadCrumbsController.showIndex();
+					UserAdmin.BreadCrumbsCollection.reset(crumbs.home);
 				});
 			});
 
@@ -219,7 +202,14 @@
 				UserAdmin.AppController = new AppController();
 				UserAdmin.AppRouter = new AppRouter();
 				UserAdmin.Users = new UserCollection(testData);
-				UserAdmin.BreadCrumbsController = new BreadCrumbsController();
+				UserAdmin.BreadCrumbsCollection = new BreadCrumbsCollection();
+				UserAdmin.navRegion.show(new BreadCrumbsListView({
+					collection: UserAdmin.BreadCrumbsCollection
+				}));
+
+				UserAdmin.BreadCrumbsCollection.on('breadcrumb:selected', function(crumb) {
+					UserAdmin.trigger(crumb.get('trigger'));
+				});
 				
 				// start
 				Backbone.history.start();
@@ -251,7 +241,7 @@
 				showUserDetails: function(event) {
 					event.preventDefault();
 
-					UserAdmin.AppController.showUserDetails(this.model);
+					UserAdmin.trigger('user:selected', this.model);
 				}
 			});
 
@@ -284,10 +274,28 @@
 			var BreadCrumbsView = Marionette.ItemView.extend({
 				tagName: 'li',
 				className: 'breadcrumb float-left',
-				template: _.template('<%= title %>')
+				template: _.template('<a href="#"><%= title %></a>'),
+
+				events: {
+					'click a': 'showPage'
+				},
+
+				showPage: function(event) {
+					event.preventDefault();
+
+					this.model.select();
+				}
 			});
 
-			var BreadCrumbsCollection = Backbone.Collection.extend({});
+			var BreadCrumb = Backbone.Model.extend({
+				select: function() {
+					this.trigger('breadcrumb:selected', this);
+				}
+			});
+
+			var BreadCrumbsCollection = Backbone.Collection.extend({
+				model: BreadCrumb
+			});
 
 			var BreadCrumbsListView = Marionette.CollectionView.extend({
 				tagName: 'ol',
