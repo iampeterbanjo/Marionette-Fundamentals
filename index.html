@@ -167,14 +167,14 @@
 			var BreadCrumbsController = Marionette.Controller.extend({
 				showIndex: function() {
 					var crumbs = new BreadCrumbsCollection({ title: 'Home' });
-					this.render(crumbs);
+					this.renderView(crumbs);
 				},
 				showUserList: function() {
 					var crumbs = new BreadCrumbsCollection([
 						{ title: 'Home' },
 						{ title: 'Users' }
 					]);
-					this.render(crumbs);
+					this.renderView(crumbs);
 				},
 				showUserEmail: function(user) {
 					var crumbs = new BreadCrumbsCollection([
@@ -182,9 +182,9 @@
 						{ title: 'Users' },
 						{ title: user.get('email') }
 					]);
-					this.render(crumbs);
+					this.renderView(crumbs);
 				},
-				render: function(crumbs) {
+				renderView: function(crumbs) {
 					UserAdmin.navRegion.show(new BreadCrumbsListView({
 						collection: crumbs
 					}));
