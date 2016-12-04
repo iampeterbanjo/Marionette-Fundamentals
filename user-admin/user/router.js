@@ -17,14 +17,3 @@ var UserRouter = Backbone.Router.extend({
     UserAdmin.trigger('user:selected', user);
   }
 });
-
-var HomeRouter = Backbone.Router.extend({
-  // routes
-  routes: {
-    "": "showIndex"
-  },
-  // route handlers
-  showIndex: function() {
-    UserAdmin.trigger('index:selected');
-  }
-});
