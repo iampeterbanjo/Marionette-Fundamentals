@@ -167,6 +167,8 @@
 				}
 			});
 
+			var breadCrumbs = new BreadCrumbModule(UserAdmin);
+
 			// Events
 			UserAdmin.addInitializer(function() {
 				var crumbs = {
@@ -180,18 +182,18 @@
 
 				UserAdmin.on('user:selected', function(user) {
 					UserAdmin.AppController.showUserDetails(user);
-					UserAdmin.BreadCrumbsCollection.reset([crumbs.home, crumbs.list, {title: user.get('email') }
+					breadCrumbs.setCrumbs([crumbs.home, crumbs.list, {title: user.get('email') }
 					]);
 				});
 
 				UserAdmin.on('userList:selected', function() {
 					UserAdmin.AppController.showUserList();
-					UserAdmin.BreadCrumbsCollection.reset([crumbs.home, crumbs.list]);
+					breadCrumbs.setCrumbs([crumbs.home, crumbs.list]);
 				});
 
 				UserAdmin.on('index:selected', function() {
 					UserAdmin.AppController.showIndex();
-					UserAdmin.BreadCrumbsCollection.reset(crumbs.home);
+					breadCrumbs.setCrumbs(crumbs.home);
 				});
 			});
 
@@ -205,10 +207,8 @@
 				UserAdmin.AppController = new AppController();
 				UserAdmin.AppRouter = new AppRouter();
 				UserAdmin.Users = new UserCollection(testData);
-				UserAdmin.BreadCrumbsCollection = new BreadCrumbsCollection();
-				UserAdmin.navRegion.show(new BreadCrumbsListView({
-					collection: UserAdmin.BreadCrumbsCollection
-				}));
+				
+				breadCrumbs.load(UserAdmin.navRegion, {title: 'Home'});
 				
 				// start
 				Backbone.history.start();

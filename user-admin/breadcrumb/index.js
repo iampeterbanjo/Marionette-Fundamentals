@@ -7,8 +7,10 @@ var BreadCrumbModule = function(app) {
 		collection.reset(data);
 	};
 
-	module.load = function() {
-		collection = new BreadCrumbsCollection();
+	module.load = function(region, initialData) {
+		initialData = initialData || {};
+
+		collection = new BreadCrumbsCollection(initialData);
 
 		collection.on('breadcrumb:selected', function(crumb) {
 			app.trigger(crumb.get('trigger'));
@@ -17,5 +19,9 @@ var BreadCrumbModule = function(app) {
 		view = new BreadCrumbsListView({
 			collection: collection
 		});
+
+		region.show(view);
 	};
+
+	return module;
 };
