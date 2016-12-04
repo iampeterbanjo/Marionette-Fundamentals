@@ -102,6 +102,11 @@
 
 			var UserAdmin = new Marionette.Application();
 
+			UserAdmin.addRegions({
+				mainRegion: "#app",
+				navRegion: '#nav-breadcrumbs'
+			});
+
 			var UserModel = Backbone.Model.extend({
 				url: 'api/users',
 				validate: function(attrs) {
@@ -167,7 +172,6 @@
 				}
 			});
 
-			var breadCrumbs = new BreadCrumbModule(UserAdmin);
 
 			// Events
 			UserAdmin.addInitializer(function() {
@@ -179,6 +183,9 @@
 						title: 'User listing', trigger: 'userList:selected'
 					}
 				};
+				
+				var breadCrumbs = new BreadCrumbModule(UserAdmin);
+				breadCrumbs.load(UserAdmin.navRegion, {title: 'Home'});
 
 				UserAdmin.on('user:selected', function(user) {
 					UserAdmin.AppController.showUserDetails(user);
@@ -198,17 +205,11 @@
 			});
 
 			UserAdmin.addInitializer(function() {
-				UserAdmin.addRegions({
-					mainRegion: "#app",
-					navRegion: '#nav-breadcrumbs'
-				});
-
 				// init
 				UserAdmin.AppController = new AppController();
 				UserAdmin.AppRouter = new AppRouter();
 				UserAdmin.Users = new UserCollection(testData);
 				
-				breadCrumbs.load(UserAdmin.navRegion, {title: 'Home'});
 				
 				// start
 				Backbone.history.start();
