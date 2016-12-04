@@ -1,18 +1,21 @@
 var UserController = Marionette.Controller.extend({
+  initialize: function(options) {
+    this.module = this.options.module;
+  },
   showUserList: function() {
-    UserAdmin.mainRegion.show(new UserListView({
-      collection: UserAdmin.Users
+    this.module.app.mainRegion.show(new UserListView({
+      collection: this.module.collection
     }));
-    UserAdmin.UserRouter.navigate("users");
+    this.module.router.navigate("users");
   },
   showUserDetails: function(user) {
     var layout = new UserDetailsLayout({
       model: user
     });
 
-    UserAdmin.mainRegion.show(layout);
+    this.module.app.mainRegion.show(layout);
     layout.summary.show(new UserSummaryView());
     layout.profile.show(new UserProfileView());
-    UserAdmin.UserRouter.navigate("users/" + user.id);
+    this.module.router.navigate("users/" + user.id);
   }
 });

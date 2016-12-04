@@ -1,23 +1,17 @@
-var UserModule = function(app) {
-  var module = {};
+var UserModule = function(settings) {
+  var module = {},
+      initialData = settings.initialData || {},
+      app = settings.app || {};
 
-  module.listUsers = function(region, users) {
-    region.show(new UserListView({
-      collection: users
-    }));
-  };
-
-  module.showUser = function(region, user) {
-    var layout = new UserDetailsLayout({
-      model: user
-    });
-
-    region.show(layout);
-    layout.summary.show(new UserSummaryView());
-    layout.profile.show(new UserProfileView());
-  };
+  module.collection = new UserCollection(initialData);
 
   module.router = new UserRouter();
+
+  module.app = app;
+
+  module.controller = new UserController({
+    module: module
+  });
 
   return module;
 };

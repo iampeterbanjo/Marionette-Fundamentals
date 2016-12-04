@@ -96,6 +96,7 @@
 	<script src="user-admin/user/model.js"></script>
 	<script src="user-admin/user/controller.js"></script>
 	<script src="user-admin/user/views.js"></script>
+	<script src="user-admin/user/index.js"></script>
 
 	<!-- Home -->
 	<script src="user-admin/home/router.js"></script>
@@ -132,14 +133,19 @@
 				var breadCrumbs = new BreadCrumbModule(UserAdmin);
 				breadCrumbs.load(UserAdmin.navRegion, {title: 'Home'});
 
-				UserAdmin.on('user:selected', function(user) {
-					UserAdmin.UserController.showUserDetails(user);
-					breadCrumbs.setCrumbs([crumbs.home, crumbs.list, {title: user.get('email') }
+				var user = new UserModule({
+					app: UserAdmin,
+					initialData: testData
+				});
+
+				UserAdmin.on('user:selected', function(selectedUser) {
+					user.controller.showUserDetails(selectedUser);
+					breadCrumbs.setCrumbs([crumbs.home, crumbs.list, {title: selectedUser.get('email') }
 					]);
 				});
 
 				UserAdmin.on('userList:selected', function() {
-					UserAdmin.UserController.showUserList();
+					user.controller.showUserList();
 					breadCrumbs.setCrumbs([crumbs.home, crumbs.list]);
 				});
 
@@ -151,11 +157,8 @@
 
 			UserAdmin.addInitializer(function() {
 				// init
-				UserAdmin.HomeController = new HomeController();
-				UserAdmin.UserController = new UserController();
 				UserAdmin.HomeRouter = new HomeRouter();
-				UserAdmin.UserRouter = new UserRouter();
-				UserAdmin.Users = new UserCollection(testData);
+				UserAdmin.HomeController = new HomeController();
 			
 				// start
 				Backbone.history.start();
