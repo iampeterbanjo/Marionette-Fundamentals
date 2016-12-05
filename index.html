@@ -102,6 +102,7 @@
 	<script src="user-admin/home/router.js"></script>
 	<script src="user-admin/home/controller.js"></script>
 	<script src="user-admin/home/views.js"></script>
+	<script src="user-admin/home/index.js"></script>
 
 	<script>
 		$(function() {
@@ -138,6 +139,10 @@
 					initialData: testData
 				});
 
+				var home = new HomeModule({
+					app: UserAdmin
+				});
+
 				UserAdmin.on('user:selected', function(selectedUser) {
 					user.controller.showUserDetails(selectedUser);
 					breadCrumbs.setCrumbs([crumbs.home, crumbs.list, {title: selectedUser.get('email') }
@@ -150,17 +155,10 @@
 				});
 
 				UserAdmin.on('index:selected', function() {
-					UserAdmin.HomeController.showIndex();
+					home.controller.showIndex();
 					breadCrumbs.setCrumbs(crumbs.home);
 				});
-			});
 
-			UserAdmin.addInitializer(function() {
-				// init
-				UserAdmin.HomeRouter = new HomeRouter();
-				UserAdmin.HomeController = new HomeController();
-			
-				// start
 				Backbone.history.start();
 			});
 

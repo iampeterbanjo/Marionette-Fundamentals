@@ -1,7 +1,9 @@
-// use Controllers to manage views
 var HomeController = Marionette.Controller.extend({
+	initialize: function(options){
+		this.module = options.module;
+	},
   showIndex: function() {
-    UserAdmin.mainRegion.show(new HomeView());
-    UserAdmin.HomeRouter.navigate("");
+    this.module.app.mainRegion.show(new HomeView());
+    this.module.router.navigate("");
   }
 });
