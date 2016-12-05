@@ -104,71 +104,19 @@
 	<script src="user-admin/home/views.js"></script>
 	<script src="user-admin/home/index.js"></script>
 
+	<!-- App -->
+	<script src="user-admin/index.js"></script>
+
 	<script>
+		var testData = [
+			{id: 1, email: "test1@email.com"},
+			{id: 2, email: "test2@email.com"},
+			{id: 3, email: "test3@email.com"},
+			{id: 4, email: "test4@email.com"}
+		];
+
 		$(function() {
-			var testData = [
-				{id: 1, email: "test1@email.com"},
-				{id: 2, email: "test2@email.com"},
-				{id: 3, email: "test3@email.com"},
-				{id: 4, email: "test4@email.com"}
-			];
-
-			var UserAdmin = new Marionette.Application();
-
-			UserAdmin.addRegions({
-				mainRegion: "#app",
-				navRegion: '#nav-breadcrumbs'
-			});
-
-			// Events
-			UserAdmin.addInitializer(function() {
-				var crumbs = {
-					home: {
-						title: 'Home', trigger: 'index:selected'
-					},
-					list: {
-						title: 'User listing', trigger: 'userList:selected'
-					}
-				};
-				
-				var breadCrumbs = new BreadCrumbModule({
-					app: UserAdmin,
-					initialData: {title: 'Home'}
-				});
-				breadCrumbs.show(UserAdmin.navRegion);
-
-				var user = new UserModule({
-					app: UserAdmin,
-					initialData: testData
-				});
-
-				var home = new HomeModule({
-					app: UserAdmin
-				});
-
-				UserAdmin.on('user:selected', function(selectedUser) {
-					user.controller.showUserDetails(selectedUser);
-					breadCrumbs.setCrumbs([crumbs.home, crumbs.list, {title: selectedUser.get('email') }
-					]);
-				});
-
-				UserAdmin.on('userList:selected', function() {
-					user.controller.showUserList();
-					breadCrumbs.setCrumbs([crumbs.home, crumbs.list]);
-				});
-
-				UserAdmin.on('index:selected', function() {
-					home.controller.showIndex();
-					breadCrumbs.setCrumbs(crumbs.home);
-				});
-
-				Backbone.history.start();
-			});
-
 			UserAdmin.start();
-
-			// for debugging
-			window.UserAdmin = UserAdmin;
 		});
 	</script>
 </body>
