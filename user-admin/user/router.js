@@ -1,19 +1,17 @@
 var UserRouter = Backbone.Router.extend({
-  // routes
+  initialize: function(options) {
+    this.module = options.module;
+  },
   routes: {
-    "": "showIndex",
     "users": "showUserList",
     "users/:id": "showUserDetails"
   },
-  // route handlers
-  showIndex: function() {
-    UserAdmin.trigger('index:selected');
-  },
+
   showUserList: function() {
-    UserAdmin.trigger('userList:selected');
+    this.module.app.trigger('userList:selected');
   },
   showUserDetails: function(id) {
-    var user = UserAdmin.Users.get(id);
-    UserAdmin.trigger('user:selected', user);
+    var user = this.module.collection.get(id);
+    this.module.app.trigger('user:selected', user);
   }
 });
