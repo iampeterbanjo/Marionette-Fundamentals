@@ -131,8 +131,11 @@
 					}
 				};
 				
-				var breadCrumbs = new BreadCrumbModule(UserAdmin);
-				breadCrumbs.load(UserAdmin.navRegion, {title: 'Home'});
+				var breadCrumbs = new BreadCrumbModule({
+					app: UserAdmin,
+					initialData: {title: 'Home'}
+				});
+				breadCrumbs.show(UserAdmin.navRegion);
 
 				var user = new UserModule({
 					app: UserAdmin,
