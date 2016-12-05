@@ -25,7 +25,7 @@ UserAdmin.addInitializer(function() {
   });
 });
 
-// Events
+// BreadCrumb Events
 UserAdmin.addInitializer(function() {
   var crumbs = {
     home: {
@@ -39,21 +39,42 @@ UserAdmin.addInitializer(function() {
   };
 
   UserAdmin.on('user:selected', function(selectedUser) {
-    UserAdmin.user.controller.showUserDetails(selectedUser);
     UserAdmin.breadCrumbs.setCrumbs([crumbs.home, crumbs.list, {
       title: selectedUser.get('email')
     }]);
   });
 
   UserAdmin.on('userList:selected', function() {
-    UserAdmin.user.controller.showUserList();
     UserAdmin.breadCrumbs.setCrumbs([crumbs.home, crumbs.list]);
   });
 
   UserAdmin.on('index:selected', function() {
-    UserAdmin.home.controller.showIndex();
     UserAdmin.breadCrumbs.setCrumbs(crumbs.home);
   });
-
-  Backbone.history.start();
 });
+
+// Home events
+UserAdmin.addInitializer(function() {
+	UserAdmin.on('index:selected', function() {
+    UserAdmin.home.controller.showIndex();
+  });
+});
+
+// User Events
+UserAdmin.addInitializer(function() {
+  UserAdmin.on('user:selected', function(selectedUser) {
+    UserAdmin.user.controller.showUserDetails(selectedUser);
+  });
+
+  UserAdmin.on('userList:selected', function() {
+    UserAdmin.user.controller.showUserList();
+  });
+
+  UserAdmin.on('index:selected', function() {
+    UserAdmin.home.controller.showIndex();
+  });
+});
+
+UserAdmin.addInitializer(function() {
+  Backbone.history.start();
+})
